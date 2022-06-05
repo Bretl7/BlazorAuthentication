@@ -1,0 +1,28 @@
+﻿@page "/login"
+@inject HttpClient Http
+@inject AuthenticationStateProvider AuthStateProvider
+@inject ILocalStorageService LocalStorage
+
+<h3>Login</h3>
+
+<EditForm Model="user" OnSubmit="HandleLogin">
+    <label for "username">Name</label>"
+    <InputText id="username" @bind-Value="user.Username" />
+    <label for "password">Password</label>"
+    <InputText id="password" @bind-Value="user.Password" typeof="password" />
+    <button type="submit" class="btn btn-primary">Do it!</button>
+</EditForm>
+
+@code {
+    UserLoginDto user = new UserLoginDto();
+
+    async Task HandleLogin()
+    {
+        var result = await Http.PostAsJsonAsync("api/auth", user);
+        //var token = await result.Content.ReadAsStringAsync();
+        string token = "eyJhbGciOiJodHRwOi8vd3d3LnczLm9yZy8yMDAxLzA0L3htbGRzaWctbW9yZSNobWFjLXNoYTUxMiIsInR5cCI6IkpXVCIsImN0eSI6IkpXVCJ9.eyJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9uYW1lIjoiYm9iIiwiZXhwIjoxNjU0MjE5NDAxfQ.cjUsgJMLa_30jcKSYkaPFN-y9AZ9HJdFzOQePL5Ut2i2FwRyycZsetQ6fN9hce998LyY1UVJqQBm54-_lNLFZA";
+        Console.WriteLine(token);
+        await LocalStorage.SetItemAsync("token", token);
+        await AuthStateProvider.GetAuthenticationStateAsync();
+    }
+}
